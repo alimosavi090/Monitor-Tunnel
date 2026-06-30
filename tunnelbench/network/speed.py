@@ -9,7 +9,7 @@ from tunnelbench.core.exceptions import NetworkError
 SPEEDTEST_URL = "https://speed.cloudflare.com/__down?bytes={size}"
 UPLOAD_URL = "https://speed.cloudflare.com/__up"
 
-def measure_download_speed(proxies: dict = None, size_mb: int = 10) -> float:
+def measure_download_speed(proxies: dict = None, size_mb: int = 10, base_url: str = None) -> float:
     """
     Measure download speed in Mbps.
     
@@ -21,7 +21,10 @@ def measure_download_speed(proxies: dict = None, size_mb: int = 10) -> float:
         float: Download speed in Mbps.
     """
     bytes_to_download = size_mb * 1024 * 1024
-    url = SPEEDTEST_URL.format(size=bytes_to_download)
+    if base_url:
+        url = f"{base_url.rstrip('/')}/download?size_mb={size_mb}"
+    else:
+        url = SPEEDTEST_URL.format(size=bytes_to_download)
     
     start_time = time.time()
     try:
@@ -46,7 +49,7 @@ def measure_download_speed(proxies: dict = None, size_mb: int = 10) -> float:
         raise NetworkError(f"Download speed test failed: {e}")
 
 
-def measure_upload_speed(proxies: dict = None, size_mb: int = 2) -> float:
+def measure_upload_speed(proxies: dict = None, size_mb: int = 2, base_url: str = None) -> float:
     """
     Measure upload speed in Mbps.
     
@@ -60,9 +63,14 @@ def measure_upload_speed(proxies: dict = None, size_mb: int = 2) -> float:
     bytes_to_upload = size_mb * 1024 * 1024
     dummy_data = b"0" * bytes_to_upload
     
+    if base_url:
+        url = f"{base_url.rstrip('/')}/upload"
+    else:
+        url = UPLOAD_URL
+        
     start_time = time.time()
     try:
-        response = requests.post(UPLOAD_URL, data=dummy_data, proxies=proxies, timeout=60)
+        response = requests.post(url, data=dummy_data, proxies=proxies, timeout=60)
         response.raise_for_status()
         
         duration = time.time() - start_time

@@ -14,6 +14,7 @@ from tunnelbench.benchmark.runner import BenchmarkRunner
 from tunnelbench.scoring.engine import ScoringEngine
 from tunnelbench.reports.generator import ReportGenerator
 from tunnelbench.history.store import HistoryStore
+from tunnelbench.network.echo_server import run_echo_server
 
 app = typer.Typer(help="TunnelBench - Professional VPN Benchmarking CLI", no_args_is_help=True)
 console = Console()
@@ -41,13 +42,13 @@ def load_servers(server_names: List[str] = None) -> List[Server]:
             # Check if this name is in config
             match = next((s for s in config_servers if s.get("name") == name), None)
             if match:
-                servers.append(Server(name=match["name"], host=match["host"], proxy_url=match.get("proxy_url")))
+                servers.append(Server(name=match["name"], host=match["host"], proxy_url=match.get("proxy_url"), speedtest_url=match.get("speedtest_url")))
             else:
                 # Treat as a host directly if not in config
                 servers.append(Server(name=name, host=name))
     else:
         for s in config_servers:
-            servers.append(Server(name=s["name"], host=s["host"], proxy_url=s.get("proxy_url")))
+            servers.append(Server(name=s["name"], host=s["host"], proxy_url=s.get("proxy_url"), speedtest_url=s.get("speedtest_url")))
 
     if not servers:
         console.print("[red]No servers configured to benchmark![/red]")
@@ -193,6 +194,17 @@ def history(server: Optional[str] = typer.Argument(None, help="Filter by server 
         )
         
     console.print(table)
+
+@app.command()
+def serve(port: int = typer.Option(8080, help="Port to listen on for Point-to-Point speed testing.")):
+    """
+    Start the TunnelBench Echo Server.
+    Run this on your foreign server to act as a direct target for speed tests.
+    """
+    setup_logger(verbose=True)
+    console.print(f"[bold green]Starting TunnelBench Server Mode on port {port}...[/bold green]")
+    console.print("[cyan]Press Ctrl+C to stop.[/cyan]")
+    run_echo_server(port=port)
 
 if __name__ == "__main__":
     app()

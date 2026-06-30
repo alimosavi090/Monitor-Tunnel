@@ -9,6 +9,7 @@ class Server:
     name: str
     host: str
     proxy_url: Optional[str] = None  # E.g., 'socks5://user:pass@host:port' or 'http://...'
+    speedtest_url: Optional[str] = None # E.g., 'http://1.2.3.4:8080'
     
     def get_proxies(self) -> Optional[dict]:
         """Return the proxies dictionary for requests if a proxy_url is set."""
