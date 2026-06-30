@@ -13,8 +13,8 @@ venv.bak/
 *.db
 *.sqlite3
 
-# Reports dir
-reports/
+# Generated Reports
+/reports/
 
 # Pytest
 .pytest_cache/
