@@ -25,7 +25,7 @@ def measure_download_speed(proxies: dict = None, size_mb: int = 10) -> float:
     
     start_time = time.time()
     try:
-        response = requests.get(url, proxies=proxies, stream=True, timeout=10)
+        response = requests.get(url, proxies=proxies, stream=True, timeout=30)
         response.raise_for_status()
         
         downloaded = 0
@@ -46,7 +46,7 @@ def measure_download_speed(proxies: dict = None, size_mb: int = 10) -> float:
         raise NetworkError(f"Download speed test failed: {e}")
 
 
-def measure_upload_speed(proxies: dict = None, size_mb: int = 5) -> float:
+def measure_upload_speed(proxies: dict = None, size_mb: int = 2) -> float:
     """
     Measure upload speed in Mbps.
     
@@ -62,7 +62,7 @@ def measure_upload_speed(proxies: dict = None, size_mb: int = 5) -> float:
     
     start_time = time.time()
     try:
-        response = requests.post(UPLOAD_URL, data=dummy_data, proxies=proxies, timeout=15)
+        response = requests.post(UPLOAD_URL, data=dummy_data, proxies=proxies, timeout=60)
         response.raise_for_status()
         
         duration = time.time() - start_time
