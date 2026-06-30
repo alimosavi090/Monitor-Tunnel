@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+env.bak/
+venv.bak/
+
+# SQLite databases
+*.db
+*.sqlite3
+
+# Reports dir
+reports/
+
+# Pytest
+.pytest_cache/
+
+# IDEs
+.idea/
+.vscode/

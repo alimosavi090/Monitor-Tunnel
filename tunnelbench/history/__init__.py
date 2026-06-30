@@ -1,0 +1,3 @@
+"""
+History storage using SQLite.
+"""
